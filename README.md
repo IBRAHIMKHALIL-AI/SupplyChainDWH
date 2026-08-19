@@ -1,15 +1,15 @@
 
 # SupplyChainDWH
 
+![SQL Server](https://img.shields.io/badge/SQL%20Server-CC2927?style=for-the-badge&logo=microsoftsqlserver&logoColor=white)
+![T-SQL](https://img.shields.io/badge/T--SQL-CC2927?style=for-the-badge&logo=microsoftsqlserver&logoColor=white)
+![Power BI](https://img.shields.io/badge/Power%20BI-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)
+![DAX](https://img.shields.io/badge/DAX-Data%20Analysis%20Expressions-1F6FEB?style=for-the-badge)
+![Data Engineering](https://img.shields.io/badge/Data%20Engineering-Medallion%20Architecture-0F766E?style=for-the-badge)
+
 > **An end-to-end supply chain data engineering and business intelligence platform built with SQL Server, T-SQL, Medallion Architecture, Kimball dimensional modeling, and Power BI.**
 
 **Author:** Ibrahim Khalil
-
-[![SQL Server](https://img.shields.io/badge/SQL%20Server-CC2927?style=for-the-badge&logo=microsoftsqlserver&logoColor=white)](https://www.microsoft.com/sql-server)
-[![T-SQL](https://img.shields.io/badge/T--SQL-CC2927?style=for-the-badge&logo=microsoftsqlserver&logoColor=white)](https://learn.microsoft.com/sql/t-sql/)
-[![Power BI](https://img.shields.io/badge/Power%20BI-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)](https://powerbi.microsoft.com/)
-[![DAX](https://img.shields.io/badge/DAX-Analytics-0078D4?style=for-the-badge&logo=microsoft&logoColor=white)](https://learn.microsoft.com/dax/)
-[![Data Engineering](https://img.shields.io/badge/Data%20Engineering-Medallion%20Architecture-2F80ED?style=for-the-badge)](#)
 
 ---
 
@@ -49,13 +49,13 @@
 
 # 🚀 Executive Summary
 
-**SupplyChainDWH** is an end-to-end data engineering and business intelligence platform designed to transform raw, inconsistent global supply chain and retail flat files into a structured analytical environment capable of supporting executive-level decision making.
+**SupplyChainDWH** is an end-to-end data engineering and business intelligence project designed to transform raw, inconsistent global supply chain and retail flat files into a structured analytical platform capable of supporting executive-level decision making.
 
-The project implements a **Medallion Architecture entirely within SQL Server using pure T-SQL**, separating raw ingestion, data profiling, quality engineering, transformation, and analytical modeling into dedicated **Bronze, Silver, and Gold layers**.
+The project implements a **Medallion Architecture entirely within SQL Server using pure T-SQL**, separating raw ingestion, data quality engineering, and analytical modeling into dedicated **Bronze, Silver, and Gold layers**.
 
-The cleansed data is subsequently modeled using a **Kimball Star Schema**, consisting of a central `gold.fact_orders` table surrounded by analytical dimensions for dates, customers, products, and sales representatives.
+The cleansed data is ultimately modeled using a **Kimball Star Schema**, consisting of a central `gold.fact_orders` table surrounded by reusable analytical dimensions for dates, customers, products, and sales representatives.
 
-The Gold warehouse is then consumed by **Power BI**, where a five-page interactive analytical application transforms the curated warehouse into a decision-support platform covering:
+The Gold warehouse is then connected to **Power BI**, where a five-page interactive analytical application transforms the warehouse into an executive-facing decision-support system covering:
 
 - Financial performance
 - Customer value
@@ -67,20 +67,19 @@ The Gold warehouse is then consumed by **Power BI**, where a five-page interacti
 - Shipping performance
 - Operational bottlenecks
 
-The project goes beyond conventional dashboard development by addressing real-world analytical engineering challenges including:
+The project goes beyond conventional dashboard development by addressing real-world analytical engineering problems, including:
 
 - Dirty categorical data
 - Hidden whitespace
 - Inconsistent business classifications
-- Missing values
-- Orphan records
 - Duplicate category representations
+- Orphan records
 - Data-type inconsistencies
 - Customer-level granularity problems
 - Power BI time-intelligence limitations
 - Filter-context challenges
 
-The complete analytical lifecycle can be summarized as:
+The complete analytical lifecycle can therefore be summarized as:
 
 ```text
 RAW DATA
@@ -114,24 +113,22 @@ BUSINESS INSIGHTS
 
 # 📊 Project Overview
 
-Supply chain analytics requires more than simply aggregating transactional data.
+Supply chain analytics requires more than simply aggregating sales data.
 
-Operational datasets frequently contain structural and semantic problems that can compromise downstream analytics:
+Raw operational datasets frequently contain:
 
 * Inconsistent categorical values
-* Duplicate representations of the same business concept
+* Duplicate representations of the same business entity
 * Missing values
 * Incorrect data types
 * Orphaned records
 * Hidden whitespace
-* Inconsistent capitalization
-* Referential integrity issues
-* Non-unique descriptive attributes
-* Granularity mismatches
+* Inconsistent naming conventions
+* Analytical granularity problems
 
-If these problems reach the reporting layer, they can produce misleading KPIs, incorrect aggregations, broken relationships, and unreliable business conclusions.
+If these issues reach the reporting layer, they can produce misleading KPIs, incorrect aggregations, broken relationships, and unreliable business conclusions.
 
-**SupplyChainDWH** addresses these problems through a structured data engineering pipeline.
+SupplyChainDWH addresses these problems through a structured data engineering pipeline.
 
 ### Core Objective
 
@@ -139,11 +136,11 @@ If these problems reach the reporting layer, they can produce misleading KPIs, i
 
 The architecture separates responsibilities into four major stages:
 
-| Layer        | Primary Responsibility                                 |
+| Stage        | Responsibility                                         |
 | ------------ | ------------------------------------------------------ |
 | **Bronze**   | Preserve and profile raw source data                   |
 | **Silver**   | Clean, standardize, validate, and transform data       |
-| **Gold**     | Build the analytical Kimball Star Schema               |
+| **Gold**     | Build the analytical Star Schema                       |
 | **Power BI** | Consume the Gold layer and deliver actionable insights |
 
 ---
@@ -153,131 +150,92 @@ The architecture separates responsibilities into four major stages:
 ## End-to-End Architecture
 
 ```text
-┌─────────────────────────────────────────────────────┐
-│           RAW SUPPLY CHAIN / RETAIL FILES           │
-│                                                     │
-│      Flat Files • Operational Records • CSVs       │
-└──────────────────────────┬──────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────┐
-│                    BRONZE LAYER                     │
-│                                                     │
-│  Raw Ingestion                                      │
-│  Data Profiling                                     │
-│  Null Detection                                     │
-│  Data-Type Inspection                               │
-│  Anomaly Detection                                  │
-│  Orphan Identification                              │
-│  Source Preservation                                │
-└──────────────────────────┬──────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────┐
-│                    SILVER LAYER                     │
-│                                                     │
-│  TRIM / REPLACE / UPPER                              │
-│  Missing-Value Handling                             │
-│  Data-Type Casting                                  │
-│  Category Standardization                           │
-│  Duplicate Resolution                               │
-│  Referential Integrity                              │
-│  Business Rules                                    │
-└──────────────────────────┬──────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────┐
-│                     GOLD LAYER                      │
-│                                                     │
-│                KIMBALL STAR SCHEMA                  │
-│                                                     │
-│                  ┌──────────────┐                   │
-│                  │ FACT ORDERS  │                   │
-│                  └──────┬───────┘                   │
-│                         │                           │
-│          ┌──────────────┼──────────────┐            │
-│          ▼              ▼              ▼            │
-│     DIM DATE       DIM CUSTOMERS   DIM PRODUCTS     │
-│                         │                           │
-│                         ▼                           │
-│                   DIM SALESMAN                      │
-└──────────────────────────┬──────────────────────────┘
-                           │
-                           ▼
-┌─────────────────────────────────────────────────────┐
-│                     POWER BI                        │
-│                                                     │
-│  Semantic Model • DAX • KPIs • Visual Analytics    │
-│  Interactive Navigation • Business Insights        │
-└─────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────┐
+│       RAW SUPPLY CHAIN / RETAIL FILES        │
+│                                              │
+│  Flat Files • Operational Records • CSVs     │
+└───────────────────────┬──────────────────────┘
+                        │
+                        ▼
+┌──────────────────────────────────────────────┐
+│                BRONZE LAYER                  │
+│                                              │
+│  Raw Ingestion                               │
+│  Data Profiling                              │
+│  Null Detection                              │
+│  Anomaly Detection                           │
+│  Orphan Identification                       │
+│  Data-Type Inspection                        │
+└───────────────────────┬──────────────────────┘
+                        │
+                        ▼
+┌──────────────────────────────────────────────┐
+│                SILVER LAYER                  │
+│                                              │
+│  TRIM / REPLACE / UPPER                      │
+│  Missing-Value Handling                      │
+│  Type Casting                                │
+│  Category Standardization                    │
+│  Duplicate Resolution                        │
+│  Referential Integrity                       │
+└───────────────────────┬──────────────────────┘
+                        │
+                        ▼
+┌──────────────────────────────────────────────┐
+│                 GOLD LAYER                   │
+│                                              │
+│          KIMBALL STAR SCHEMA                 │
+│                                              │
+│              ┌─────────────┐                 │
+│              │ FACT ORDERS │                 │
+│              └──────┬──────┘                 │
+│                     │                        │
+│       ┌─────────────┼─────────────┐          │
+│       ▼             ▼             ▼          │
+│   DIM DATE     DIM CUSTOMER    DIM PRODUCT   │
+│                     │                        │
+│                     ▼                        │
+│               DIM SALESMAN                   │
+└───────────────────────┬──────────────────────┘
+                        │
+                        ▼
+┌──────────────────────────────────────────────┐
+│                  POWER BI                    │
+│                                              │
+│  Semantic Model • DAX • KPIs • Visuals       │
+│  Interactive Navigation • Business Insights  │
+└──────────────────────────────────────────────┘
 ```
 
-## Architectural Philosophy
+### Architectural Philosophy
 
-The architecture deliberately separates four concerns:
+The architecture intentionally separates four different concerns:
 
-| Concern                 | Responsibility                                                   |
-| ----------------------- | ---------------------------------------------------------------- |
-| **Ingestion**           | Preserve source fidelity and establish a raw landing zone        |
-| **Quality Engineering** | Identify and resolve structural and semantic data problems       |
-| **Business Modeling**   | Convert trusted data into an analytical dimensional model        |
-| **Consumption**         | Expose curated information through an interactive BI application |
+**Ingestion** → Preserve source fidelity.
 
-This separation provides a clear path for tracing analytical results backward through the transformation pipeline.
+**Quality Engineering** → Resolve structural and semantic data problems.
 
-A KPI displayed in Power BI can therefore be conceptually traced through:
+**Business Modeling** → Convert operational data into an analytical model.
 
-```text
-Power BI Visual
-      ↓
-DAX Measure
-      ↓
-Gold Fact / Dimensions
-      ↓
-Silver Transformation
-      ↓
-Bronze Source
-      ↓
-Original Operational Data
-```
+**Consumption** → Expose the curated data through an interactive BI application.
+
+This separation improves maintainability and makes it possible to trace analytical results back through the transformation pipeline.
 
 ---
 
 # 🏛️ Medallion Architecture
 
-The warehouse implements a **Medallion Architecture entirely inside SQL Server using pure T-SQL**.
+## 1. Bronze Layer — Ingestion & Profiling
 
-The three layers represent progressively increasing levels of trust and business readiness:
+The Bronze layer represents the **raw landing zone** of the warehouse.
 
-```text
-Bronze
-  │
-  │ Raw + Observable
-  ▼
-Silver
-  │
-  │ Clean + Standardized
-  ▼
-Gold
-  │
-  │ Business-Ready + Analytical
-  ▼
-Power BI
-```
+Source flat files were loaded into SQL Server with minimal transformation in order to preserve the original source information.
 
----
+The primary responsibility at this stage was **observation rather than correction**.
 
-# 1. Bronze Layer — Ingestion & Profiling
+### Data Profiling
 
-The Bronze layer acts as the **raw landing zone** for the supply chain and retail source data.
-
-Raw flat files were loaded into SQL Server with minimal transformation to preserve source fidelity.
-
-The objective at this stage was **observation rather than correction**.
-
-## Data Profiling
-
-The raw dataset was investigated for:
+The raw data was investigated for:
 
 * Null and missing values
 * Data-type mismatches
@@ -289,9 +247,10 @@ The raw dataset was investigated for:
 * Inconsistent capitalization
 * Market naming inconsistencies
 * Referential integrity issues
-* Structural anomalies
 
-For example, multiple source values could represent the same business concept:
+This profiling stage is critical because data quality problems are often invisible when looking at a dataset superficially.
+
+For example:
 
 ```text
 Europe
@@ -300,58 +259,62 @@ EU
 EU 
 ```
 
-Although visually similar, these are technically different string values and can therefore produce separate categories during aggregation.
+may visually appear to represent the same business concept while technically behaving as separate categorical values.
 
-## Why Preserve Raw Data?
+### Why Preserve Raw Data?
 
 The Bronze layer provides:
 
-### Traceability
+* **Traceability** — transformations can be traced back to source data.
+* **Reproducibility** — cleansing logic can be rerun without requiring the original source files.
+* **Auditability** — the original representation remains available for investigation.
+* **Debugging** — unexpected Gold-layer results can be traced through previous transformations.
+* **Separation of concerns** — ingestion is isolated from business logic.
 
-Transformations can be traced back to the original source representation.
-
-### Reproducibility
-
-Cleansing logic can be rerun without requiring the external source file to be manually reconstructed.
-
-### Auditability
-
-Original source values remain available when investigating unexpected results.
-
-### Debugging
-
-Unexpected Gold-layer results can be traced through the transformation pipeline.
-
-### Separation of Concerns
-
-Source ingestion is isolated from business transformation logic.
-
-The Bronze layer therefore serves as the controlled boundary between external operational data and the analytical warehouse.
+The Bronze layer therefore acts as the controlled boundary between external operational data and the analytical warehouse.
 
 ---
 
 # 2. Silver Layer — Cleansing & Standardization
 
-The Silver layer transforms raw source records into a **trusted and standardized analytical dataset**.
+The Silver layer transforms raw source records into a **trusted and standardized dataset**.
 
-This is where the primary data quality engineering rules are applied.
+This stage contains the primary data quality engineering logic.
 
-## Core Transformations
+### Core Transformations
 
-| Data Quality Problem        | Transformation                   |
-| --------------------------- | -------------------------------- |
-| Leading/trailing whitespace | `TRIM()`                         |
-| Internal double-spaces      | `REPLACE()`                      |
-| Inconsistent capitalization | `UPPER()`                        |
-| Missing values              | Business-specific handling       |
-| Incorrect data types        | `CAST()` / `CONVERT()`           |
-| Duplicate categories        | Canonical mappings               |
-| Inconsistent market values  | Standardized business categories |
-| Orphan records              | Referential integrity handling   |
+| Problem                     | Transformation                 |
+| --------------------------- | ------------------------------ |
+| Leading/trailing whitespace | `TRIM()`                       |
+| Internal double-spaces      | `REPLACE()`                    |
+| Inconsistent capitalization | `UPPER()`                      |
+| Missing values              | Explicit business rules        |
+| Incorrect data types        | `CAST()` / `CONVERT()`         |
+| Duplicate categories        | Standardized mappings          |
+| Inconsistent market names   | Canonical business values      |
+| Orphan records              | Referential integrity handling |
 
-## Whitespace Normalization
+### Market Standardization
 
-Hidden whitespace can create subtle analytical problems.
+One of the identified categorical problems involved multiple representations of the European market:
+
+```text
+EU
+EUROPE
+EU 
+```
+
+These values were consolidated into a single standardized business category:
+
+```text
+Europe
+```
+
+This prevents Power BI from treating logically identical markets as independent categories.
+
+### Whitespace Normalization
+
+Hidden whitespace can create extremely subtle analytical errors.
 
 For example:
 
@@ -361,9 +324,9 @@ For example:
 "Europe  "
 ```
 
-are different values to the database even though they may appear identical to a human.
+are different string values even though they appear almost identical to a human.
 
-A representative transformation is:
+A representative cleansing transformation is:
 
 ```sql
 SELECT
@@ -377,33 +340,11 @@ SELECT
 FROM silver_source;
 ```
 
-This performs three distinct normalization operations:
+Additional business mapping can then convert normalized representations into canonical reporting values.
 
-* `TRIM()` removes leading and trailing whitespace.
-* `REPLACE()` removes internal repeated spaces.
-* `UPPER()` normalizes capitalization.
+### Missing Values
 
-## Market Standardization
-
-Inconsistent source representations such as:
-
-```text
-EU
-EUROPE
-EU 
-```
-
-were consolidated into the canonical reporting category:
-
-```text
-Europe
-```
-
-This prevents Power BI and SQL aggregations from treating logically identical markets as separate business entities.
-
-## Missing Values
-
-Missing data was treated according to field semantics rather than applying a universal replacement strategy.
+Missing data was evaluated according to field semantics rather than blindly replacing every `NULL`.
 
 The objective was to distinguish between:
 
@@ -413,36 +354,30 @@ The objective was to distinguish between:
 * Invalid records
 * Values requiring business-standard defaults
 
-This prevents the cleansing process from introducing artificial information.
+This prevents data cleansing from introducing artificial information into the dataset.
 
-## Data-Type Standardization
+### Data-Type Standardization
 
-Explicit data-type casting was performed before loading the Gold layer.
+Explicit casting was performed before Gold-layer modeling to ensure that measures and relationships operate on predictable types.
 
-Consistent data types are essential for:
+Consistent data types are especially important for:
 
 * Arithmetic calculations
-* Aggregations
+* Aggregation
 * Date filtering
-* Relationships
+* Relationship integrity
 * DAX calculations
 * Power BI semantic modeling
-
-## Referential Integrity
-
-Orphaned records were identified during profiling and addressed before the Gold model was populated.
-
-This prevents invalid relationships from propagating into the analytical layer.
 
 ---
 
 # 3. Gold Layer — Dimensional Modeling
 
-The Gold layer represents the **business-ready analytical warehouse**.
+The Gold layer contains the **business-ready analytical warehouse**.
 
-Rather than exposing operational structures directly to Power BI, the cleansed Silver data is transformed into a **Kimball Star Schema**.
+Rather than exposing normalized operational structures directly to Power BI, the cleansed Silver data is transformed into a **Kimball Star Schema**.
 
-## Gold Tables
+### Gold Tables
 
 ```text
 gold.fact_orders
@@ -455,40 +390,32 @@ gold.dim_salesman
 The model follows a classic dimensional architecture:
 
 ```text
-                         ┌─────────────────┐
-                         │    dim_date     │
-                         └────────┬────────┘
-                                  │
-                                  ▼
-┌─────────────────┐      ┌─────────────────┐      ┌─────────────────┐
-│  dim_customers  │─────►│   fact_orders   │◄─────│   dim_products  │
-└─────────────────┘      └────────┬────────┘      └─────────────────┘
-                                  ▲
-                                  │
-                         ┌────────┴────────┐
-                         │  dim_salesman   │
-                         └─────────────────┘
+                      ┌─────────────────┐
+                      │   dim_date      │
+                      └────────┬────────┘
+                               │
+                               │
+┌─────────────────┐            ▼            ┌─────────────────┐
+│ dim_customers   │──────► fact_orders ◄────│  dim_products   │
+└─────────────────┘            ▲            └─────────────────┘
+                               │
+                               │
+                      ┌────────┴────────┐
+                      │  dim_salesman   │
+                      └─────────────────┘
 ```
 
----
-
-# ⭐ Kimball Star Schema
-
-The Gold model follows the principles of **Kimball dimensional modeling**.
-
-## Fact Table
+### Fact Table
 
 `gold.fact_orders` represents the central transactional fact table.
 
-Its grain is centered around the order-level business event represented by the source data.
+It contains the measurable business events required for analytical reporting, including the measures and foreign keys necessary to analyze orders across multiple dimensions.
 
-The fact table provides the measurable values and foreign keys required to analyze orders across multiple dimensions.
+### Dimensions
 
-## Dimensions
+#### `gold.dim_date`
 
-### `gold.dim_date`
-
-Provides the temporal context required for:
+Provides the calendar context required for:
 
 * Yearly analysis
 * Monthly analysis
@@ -496,48 +423,67 @@ Provides the temporal context required for:
 * Previous-year comparisons
 * Time-based filtering
 
-The dimension is configured as a proper Power BI date table to provide a reliable foundation for time intelligence.
+The date dimension is configured as a proper Power BI date table to provide a reliable temporal foundation for analytical calculations.
 
-### `gold.dim_customers`
+#### `gold.dim_customers`
 
-Contains customer-level descriptive attributes supporting:
+Contains customer-level descriptive attributes used to analyze:
 
-* Customer value analysis
+* Customer value
 * Segmentation
 * Geography
 * Customer rankings
-* VIP identification
+* VIP customers
 
-### `gold.dim_products`
+#### `gold.dim_products`
 
 Contains product attributes supporting:
 
 * Product analysis
-* Department analysis
-* Profitability analysis
+* Departmental analysis
+* Profitability
 * Discount analysis
 * Portfolio analysis
 
-### `gold.dim_salesman`
+#### `gold.dim_salesman`
 
-Contains sales representative attributes supporting:
+Contains sales-representative attributes supporting:
 
 * Sales performance
 * Commission analysis
 * Regional coverage
 * Incentive efficiency
 
-## Relationship Strategy
+---
 
-The Gold semantic structure follows:
+# ⭐ Kimball Star Schema
 
-* `1-to-Many` relationships
+The Gold model follows the principles of **Kimball dimensional modeling**.
+
+### Key Design Decisions
+
+* Central transactional fact table
+* Conformed analytical dimensions
+* Surrogate keys
+* Clear dimensional grain
+* 1-to-Many relationships
 * Single-direction filter propagation
-* Dimension-to-fact filtering
-* Surrogate dimension keys
-* Clear separation between descriptive and measurable attributes
+* Dedicated date dimension
+* Separation of descriptive attributes from measurable events
 
-This reduces ambiguity and provides predictable behavior inside Power BI.
+### Why a Star Schema?
+
+A Star Schema provides several advantages for Power BI:
+
+1. **Simpler analytical queries**
+2. **Predictable filter propagation**
+3. **Reduced model complexity**
+4. **Improved usability for BI developers**
+5. **Clear separation between facts and dimensions**
+6. **Efficient aggregation**
+7. **Strong alignment with dimensional BI workloads**
+
+Instead of forcing Power BI to interpret a complex operational schema, the Gold layer provides a semantic structure specifically designed for analytical consumption.
 
 ---
 
@@ -545,9 +491,9 @@ This reduces ambiguity and provides predictable behavior inside Power BI.
 
 Data quality was treated as a core engineering responsibility rather than a final visualization step.
 
-## Hidden Whitespace
+## Quality Problems Addressed
 
-Source values such as:
+### Hidden Whitespace
 
 ```text
 "Europe"
@@ -555,15 +501,11 @@ Source values such as:
 "Europe  "
 ```
 
-can become separate categories.
+These values can generate separate groups and distort aggregations.
 
-**Solution:** `TRIM()` + `REPLACE()`.
+**Solution:** `TRIM()` and `REPLACE()`.
 
----
-
-## Inconsistent Categorization
-
-Source values such as:
+### Inconsistent Categorization
 
 ```text
 EU
@@ -571,62 +513,49 @@ EUROPE
 EU 
 ```
 
-were consolidated into:
+**Solution:** Normalize the source values and map them to:
 
 ```text
 Europe
 ```
 
----
+### Duplicate Category Representations
 
-## Duplicate Category Representations
+Logically identical categories were identified during profiling and consolidated into canonical business values.
 
-Logically identical categories were identified during profiling and consolidated into canonical business values during Silver-layer transformation.
-
----
-
-## Orphan Records
+### Orphan Records
 
 Records without valid parent entities were identified before populating the dimensional model.
 
 This protects the Gold layer from broken analytical relationships.
 
----
+### Data-Type Inconsistencies
 
-## Data-Type Inconsistencies
-
-Explicit casting was performed before loading the Gold model.
+Explicit type casting was performed before loading the Gold model.
 
 This ensures predictable behavior during:
 
+* Aggregation
 * Joins
-* Aggregations
 * Relationship creation
 * DAX calculations
-* Power BI modeling
+* Power BI rendering
 
 ---
 
 # 🧠 Advanced DAX & Modeling Solutions
 
-The Power BI layer required more than standard measures.
+The Power BI layer involved more than creating standard measures.
 
-Several analytical problems required understanding:
-
-* Filter context
-* Row context
-* Granularity
-* Relationship behavior
-* Time intelligence
-* Dynamic calculations
+Several analytical problems required understanding **filter context, granularity, relationship behavior, and time-intelligence mechanics**.
 
 ---
 
-# 1. Time Intelligence — Previous Year Bypass
+## 1. Time Intelligence — Previous Year Bypass
 
-## The Problem
+### The Problem
 
-Standard Power BI functions such as:
+Standard Power BI time-intelligence functions such as:
 
 ```text
 SAMEPERIODLASTYEAR()
@@ -635,21 +564,21 @@ DATEADD()
 
 did not produce the required Previous Year comparison under the encountered filtering/schema conditions.
 
-The issue involved the date context and Power BI's requirements for interpreting date selections for standard time-intelligence operations.
+The issue was related to Power BI's date-filtering behavior and the requirement for a contiguous, appropriately interpreted date context.
 
-Instead of forcing standard functions into an unsuitable context, a custom DAX solution was developed.
+Instead of forcing the standard functions to work around an unsuitable context, a custom calculation was designed to explicitly control the year filter.
 
-## Solution Strategy
+### Solution Strategy
 
 The custom approach:
 
-1. Captures the currently selected year.
+1. Captures the selected year.
 2. Calculates the previous year.
-3. Removes the existing date filter.
-4. Explicitly applies the previous-year filter.
-5. Recalculates revenue under that context.
+3. Removes the existing year filter.
+4. Applies the required previous-year filter.
+5. Recalculates revenue in that context.
 
-Representative implementation:
+A representative implementation is:
 
 ```DAX
 Revenue PY =
@@ -667,19 +596,19 @@ CALCULATE (
 )
 ```
 
-The important engineering concept is **explicit filter-context manipulation**.
+The important engineering principle is not the syntax itself, but the explicit manipulation of **filter context**.
 
-Rather than relying entirely on implicit time-intelligence behavior, the measure explicitly defines the temporal context under which revenue must be calculated.
+Rather than relying entirely on implicit time-intelligence behavior, the calculation explicitly defines which temporal context should be evaluated.
 
-This enabled accurate PY trend comparisons for the Executive Overview page.
+This made it possible to generate reliable PY trend comparisons for the Executive Overview page.
 
 ---
 
 # 2. Customer Granularity & Name Skew
 
-## The Problem
+### The Problem
 
-Customer names are not unique identifiers.
+Customer names are not necessarily unique identifiers.
 
 For example:
 
@@ -687,29 +616,29 @@ For example:
 Mary Smith
 ```
 
-could represent multiple independent customer records.
+could represent multiple independent customers.
 
-If a visual groups only by:
+If a visual uses only:
 
 ```text
 customer_fname + customer_lname
 ```
 
-Power BI can aggregate multiple customers into a single displayed category.
+as the categorical field, Power BI can aggregate multiple customers under one displayed name.
 
 This creates false analytical outliers.
 
-For example, a leaderboard might incorrectly suggest:
+A customer leaderboard could therefore incorrectly suggest that:
 
-```text
-Mary Smith = Extremely High Revenue
-```
+> **"Mary Smith" is an exceptionally valuable customer**
 
-when the revenue actually belongs to several different customers sharing the same name.
+when the apparent value actually belongs to several different customer records.
 
-## Solution
+### Solution
 
-The unique customer identifier was incorporated into the display label:
+The customer identifier was appended to the displayed name.
+
+A representative DAX implementation is:
 
 ```DAX
 Customer Display Name =
@@ -721,7 +650,7 @@ Customer Display Name =
         & "]"
 ```
 
-The result becomes:
+The resulting display becomes:
 
 ```text
 Mary Smith [1024]
@@ -729,31 +658,32 @@ Mary Smith [1847]
 Mary Smith [2315]
 ```
 
-Each customer remains human-readable while retaining analytical uniqueness.
+Each customer now retains a visually recognizable name while remaining analytically unique.
 
-## Why This Is a Granularity Problem
+### Why This Is a Granularity Problem
 
-This was fundamentally a **data-grain problem**, not merely a visualization formatting problem.
+This was fundamentally a **data-grain problem**, not a simple chart-formatting problem.
 
-The model operates at the customer-record level, while the original visual grouped by a non-unique descriptive attribute.
+The analytical model operates at the customer-record level, while the visual was initially grouping by a non-unique descriptive attribute.
 
-The solution restores the intended analytical grain by incorporating the unique customer identifier into the reporting dimension.
+The solution therefore restores the correct analytical granularity by incorporating the unique identifier into the reporting dimension.
 
 ---
 
 # 3. Custom Analytical Measures
 
-The semantic model includes analytical measures using:
+The semantic model includes measures built using DAX functions and concepts such as:
 
 * `DIVIDE()`
 * `SUMX()`
 * Variables
 * Filter-context manipulation
 * Dynamic calculations
+* Context-aware aggregations
 
-Representative measures include:
+Representative analytical metrics include:
 
-## Average Order Value
+### Average Order Value
 
 ```DAX
 Average Order Value =
@@ -763,7 +693,7 @@ DIVIDE (
 )
 ```
 
-## Profit Margin
+### Profit Margin
 
 ```DAX
 Profit Margin =
@@ -773,11 +703,11 @@ DIVIDE (
 )
 ```
 
-## Total Commission
+### Total Commission
 
-Commission calculations use aggregation logic such as `SUMX()` when commission must be evaluated at the appropriate row-level granularity before aggregation.
+Commission calculations use aggregation logic such as `SUMX()` where row-level commission calculations need to be evaluated before being aggregated.
 
-These measures form the analytical foundation of the five dashboard pages.
+These measures form the analytical foundation for the five dashboard pages.
 
 ---
 
@@ -785,9 +715,9 @@ These measures form the analytical foundation of the five dashboard pages.
 
 Power BI serves as the **analytical consumption layer** on top of the SQL Server Gold warehouse.
 
-The application contains **five interactive dashboard pages**, each designed around a specific business domain.
+The application contains **five interactive dashboard pages**, each targeting a different business domain.
 
-The objective was not simply to display charts, but to build an analytical application capable of answering practical business questions.
+The objective was not simply to display KPIs, but to create an analytical application capable of answering practical business questions.
 
 ---
 
@@ -796,53 +726,62 @@ The objective was not simply to display charts, but to build an analytical appli
 The dashboard follows a custom visual design language built around:
 
 * Modern flat design
-* Abstract coastal gradient background
+* Coastal gradient background
 * Navy
 * Azure
 * Sage Green
 * Transparent visual containers
 * Minimalist visual hierarchy
-* Persistent left-hand navigation ribbon
+* Persistent left-side navigation
 * Custom transparent PNG navigation element
 * Functional Home button
-* Consistent page-to-page navigation
+* Consistent page navigation
 * Executive-oriented KPI presentation
 
-## Design Philosophy
+### Design Philosophy
 
-The interface separates:
+The visual design separates:
 
-```text
-Navigation
-     ↓
-KPI Hierarchy
-     ↓
-Primary Analytics
-     ↓
-Supporting Context
-```
+**Navigation**
 
-This creates a consistent application-like experience rather than five disconnected dashboard pages.
+from
 
-The design balances:
+**KPI hierarchy**
+
+from
+
+**Analytical visuals**
+
+from
+
+**Supporting context**
+
+This creates a consistent application-like experience rather than five disconnected Power BI pages.
+
+The design prioritizes:
 
 * Readability
+* Consistency
 * Information density
 * Visual hierarchy
-* Consistency
-* Navigation
-* Executive interpretation
+* Fast executive interpretation
 * Analytical exploration
 
 ---
 
-# 📈 Dashboard Pages
+# 📸 Dashboard Preview
 
-# 1. Executive Overview
+The following screenshots showcase the five analytical pages of the Power BI application.
 
-The Executive Overview provides the highest-level view of organizational performance.
+---
 
-## Key Components
+## 1. Executive Overview
+
+The Executive Overview provides the highest-level view of business performance.
+
+![Executive Overview](IMAGES/EXEC.png)
+
+### Key Components
 
 * Revenue KPI
 * Profit KPI
@@ -852,23 +791,25 @@ The Executive Overview provides the highest-level view of organizational perform
 * Previous Year Revenue trend
 * Executive performance indicators
 
-## Revenue vs. Previous Year
+### Revenue vs. Previous Year
 
 A wide line chart compares:
 
 ```text
 Total Revenue
-      vs.
+       vs.
 Revenue PY
 ```
 
-The custom Previous Year DAX logic ensures that both time series are evaluated using the intended year context.
+The custom Previous Year DAX logic ensures that the two time series are evaluated using the intended year context.
 
-## Business Purpose
+### Business Purpose
 
-> **How is the business performing overall, financially and operationally?**
+This page answers:
 
-The page provides executives with a rapid overview before deeper analysis of customers, products, sales teams, or logistics.
+> **"How is the business performing overall, financially and operationally?"**
+
+It allows executives to identify high-level performance changes before drilling into customers, products, sales teams, or logistics.
 
 ---
 
@@ -876,7 +817,9 @@ The page provides executives with a rapid overview before deeper analysis of cus
 
 This page focuses on **who the customers are, where they operate, and how much value they generate**.
 
-## Key Components
+![Customer & Regional Insights](IMAGES/CUSTOMER.png)
+
+### Key Components
 
 * Global geographic map
 * Revenue by customer state
@@ -885,7 +828,7 @@ This page focuses on **who the customers are, where they operate, and how much v
 * VIP Customer Leaderboard
 * Unique customer-ID display logic
 
-## Volume vs. Value
+### Volume vs. Value
 
 The combination chart compares:
 
@@ -895,17 +838,19 @@ Total Orders
 Total Revenue
 ```
 
-This distinguishes high-volume customer segments from high-value segments.
+This helps distinguish high-volume customer segments from high-value segments.
 
-A segment can generate many transactions without necessarily producing proportionally high revenue.
+A segment may generate a large number of transactions without necessarily producing proportionally high revenue.
 
-## VIP Customer Analysis
+### VIP Customer Analysis
 
 The customer uniqueness solution prevents identical names from being aggregated into false high-value customers.
 
-## Business Purpose
+### Business Purpose
 
-> **Who are our most valuable customers, and where is our revenue coming from?**
+The page answers:
+
+> **"Who are our most valuable customers, and where is our revenue coming from?"**
 
 ---
 
@@ -913,22 +858,24 @@ The customer uniqueness solution prevents identical names from being aggregated 
 
 This page focuses on product portfolio economics.
 
-## Key Components
+![Product Profitability & Margins](IMAGES/PRODUCT.png)
+
+### Key Components
 
 * Department-level Treemap
 * Product portfolio analysis
 * Average Discount vs. Profit Margin scatter plot
 * Top 5 profitable products
-* Bottom 5 bleeding/loss-making products
+* Bottom 5 products
 * Divergent conditional formatting
 
-## Discount vs. Margin Analysis
+### Discount vs. Margin Analysis
 
-The scatter plot addresses:
+The scatter plot addresses the central business question:
 
-> **Are heavy discounts burning margins?**
+> **"Are heavy discounts burning margins?"**
 
-The visual compares:
+The visual allows products to be compared according to:
 
 ```text
 Average Discount
@@ -936,28 +883,32 @@ Average Discount
 Profit Margin
 ```
 
-This allows products to be investigated according to their discounting behavior and resulting profitability.
+This makes it possible to identify products where aggressive discounting may be associated with weak profitability.
 
-## Top vs. Bottom Products
+### Top vs. Bottom Products
 
 Conditional formatting highlights:
 
 * Top 5 profitable products
 * Bottom 5 bleeding/loss-making products
 
-This provides an immediate visual distinction between products contributing positively to profitability and products requiring further investigation.
+This creates an immediate distinction between products contributing positively to profitability and products requiring investigation.
 
-## Business Purpose
+### Business Purpose
 
-> **Which products create economic value, and where is discounting potentially eroding profitability?**
+The page answers:
+
+> **"Which products create economic value, and where is discounting potentially eroding profitability?"**
 
 ---
 
 # 👥 4. Sales Team Performance
 
-This page evaluates sales representatives beyond simple revenue rankings.
+This page analyzes sales representatives beyond simple revenue rankings.
 
-## Key Components
+![Sales Team Performance](IMAGES/SALES.png)
+
+### Key Components
 
 * Active sales representatives
 * Total commission
@@ -967,7 +918,7 @@ This page evaluates sales representatives beyond simple revenue rankings.
 * Dynamic color coding
 * Margin contribution analysis
 
-## Commission Efficiency
+### Commission Efficiency
 
 The scatter plot evaluates:
 
@@ -977,17 +928,19 @@ Commission Rate
 Total Revenue
 ```
 
-This helps assess whether higher incentive costs are translating into meaningful commercial performance.
+This helps determine whether higher incentive costs are translating into meaningful commercial performance.
 
-## Dynamic Leaderboard
+### Dynamic Leaderboard
 
 Sales representatives are dynamically ranked and visually differentiated according to their contribution.
 
-The objective is to avoid treating gross sales as the only definition of sales success.
+The objective is to avoid treating gross sales as the only definition of success.
 
-## Business Purpose
+### Business Purpose
 
-> **Which sales representatives are generating efficient and profitable commercial performance?**
+The page answers:
+
+> **"Which sales representatives are generating efficient and profitable commercial performance?"**
 
 ---
 
@@ -995,7 +948,9 @@ The objective is to avoid treating gross sales as the only definition of sales s
 
 The Logistics Operations page focuses on supply chain reliability and delivery execution.
 
-## Key Components
+![Logistics & Delivery Operations](IMAGES/LOGISTICS.png)
+
+### Key Components
 
 * Average Real Shipping Days
 * Average Scheduled Shipping Days
@@ -1015,7 +970,7 @@ One of the most significant operational findings is the identified:
 
 This indicates a substantial gap between expected and actual delivery performance.
 
-## Actual vs. Scheduled Shipping
+### Actual vs. Scheduled Shipping
 
 The distinction between:
 
@@ -1029,70 +984,84 @@ and:
 Average Real Shipping Days
 ```
 
-is operationally important.
+is critical.
 
-Tracking only average shipping duration can hide whether the organization is actually meeting its planned delivery commitments.
+A business may appear operationally efficient if it only tracks average shipping duration.
 
-Comparing actual performance against scheduled performance exposes operational reliability.
+However, comparing actual performance against the planned schedule reveals whether the logistics network is meeting customer expectations.
 
-## Historical Bottlenecks
+### Historical Bottlenecks
 
-Overlapping trend lines allow operational teams to investigate whether delays are:
+Overlapping trend lines allow operational teams to investigate whether shipping delays are:
 
 * Persistent
 * Seasonal
 * Market-specific
 * Shipping-mode-specific
-* Associated with specific operational periods
+* Associated with particular operational periods
 
-## Business Purpose
+### Business Purpose
 
-> **Where is the logistics network failing to meet delivery expectations?**
+The page answers:
+
+> **"Where is the logistics network failing to meet delivery expectations?"**
+
+---
+
+# 🖼️ Dashboard Gallery
+
+For quick visual reference, the complete dashboard application is presented below.
+
+### Executive Overview
+
+![Executive Dashboard](IMAGES/EXEC.png)
+
+### Customer & Regional Analytics
+
+![Customer Dashboard](IMAGES/CUSTOMER.png)
+
+### Product Profitability
+
+![Product Dashboard](IMAGES/PRODUCT.png)
+
+### Sales Team Performance
+
+![Sales Dashboard](IMAGES/SALES.png)
+
+### Logistics Operations
+
+![Logistics Dashboard](IMAGES/LOGISTICS.png)
 
 ---
 
 # 🛠️ Tech Stack
 
-| Technology                 | Role                                                                      |
-| -------------------------- | ------------------------------------------------------------------------- |
-| **SQL Server**             | Central data warehouse and database platform                              |
-| **T-SQL**                  | Ingestion, profiling, cleansing, transformation, validation, and modeling |
-| **Medallion Architecture** | Bronze/Silver/Gold pipeline architecture                                  |
-| **Kimball Star Schema**    | Dimensional analytical modeling                                           |
-| **Surrogate Keys**         | Stable dimension identity and relationship management                     |
-| **Power BI**               | Interactive BI and analytical consumption layer                           |
-| **DAX**                    | Measures, calculations, filter context, and time intelligence             |
-| **Data Modeling**          | Semantic model and relationship design                                    |
+| Technology                 | Role                                                           |
+| -------------------------- | -------------------------------------------------------------- |
+| **SQL Server**             | Data warehouse and database platform                           |
+| **T-SQL**                  | Ingestion, cleansing, transformation, validation, and modeling |
+| **Medallion Architecture** | Bronze/Silver/Gold data pipeline structure                     |
+| **Kimball Star Schema**    | Dimensional analytical modeling                                |
+| **Surrogate Keys**         | Stable dimension identity and relationship management          |
+| **Power BI**               | Interactive BI and analytical consumption layer                |
+| **DAX**                    | Measures, calculations, filter context, and time intelligence  |
+| **Data Modeling**          | Semantic model, relationships, and analytical structure        |
 
-## Why These Technologies?
+### Why These Technologies?
 
-### SQL Server
+**SQL Server** provides the centralized relational platform for the warehouse.
 
-Provides the centralized relational platform hosting the warehouse layers.
+**T-SQL** enables the transformation pipeline to be implemented close to the data.
 
-### T-SQL
+**Medallion Architecture** separates raw ingestion from cleansing and business-ready data.
 
-Allows ingestion, data quality engineering, transformation, and dimensional modeling to be implemented close to the data.
+**Kimball dimensional modeling** provides a structure optimized for analytical workloads.
 
-### Medallion Architecture
+**Surrogate keys** provide stable dimensional identifiers independent of potentially unreliable source identifiers.
 
-Separates raw ingestion from quality engineering and business-ready analytical data.
+**Power BI** provides interactive analytical exploration and executive reporting.
 
-### Kimball Star Schema
-
-Provides a clear and BI-friendly dimensional structure optimized for analytical workloads.
-
-### Surrogate Keys
-
-Provide stable dimension identifiers independent of potentially unreliable source identifiers.
-
-### Power BI
-
-Provides interactive exploration, dashboarding, and executive reporting.
-
-### DAX
-
-Enables context-aware calculations, dynamic measures, time comparisons, and analytical logic that complements the SQL warehouse.
+**DAX** enables calculations that cannot be represented through static SQL aggregations alone.
 
 ---
 
@@ -1116,7 +1085,7 @@ Source records were loaded with minimal transformation to preserve source fideli
 
 ## Phase 2 — Data Profiling
 
-The Bronze layer was investigated for:
+The Bronze data was inspected for:
 
 * Nulls
 * Data types
@@ -1126,7 +1095,7 @@ The Bronze layer was investigated for:
 * Orphan records
 * Referential integrity problems
 
-The objective was to understand the source before applying transformation rules.
+The objective was to understand the source before applying transformation logic.
 
 ---
 
@@ -1164,7 +1133,7 @@ gold.dim_products
 gold.dim_salesman
 ```
 
-Surrogate keys and dimensional relationships were established to create the analytical Star Schema.
+Surrogate keys and relationships were established to create the analytical Star Schema.
 
 ---
 
@@ -1172,16 +1141,16 @@ Surrogate keys and dimensional relationships were established to create the anal
 
 Power BI was connected to the Gold layer rather than directly to the raw operational structures.
 
+This creates a clean separation:
+
 ```text
 SQL Server
-    │
-    └── Gold Warehouse
-            │
-            ▼
-         Power BI
+   │
+   └── Gold Warehouse
+          │
+          ▼
+       Power BI
 ```
-
-This maintains a clean separation between data engineering and analytical consumption.
 
 ---
 
@@ -1191,7 +1160,7 @@ The Power BI model was configured with:
 
 * Dimension-to-fact relationships
 * Single-direction filtering
-* Dedicated date table
+* Date table
 * Analytical measures
 * KPI logic
 * Business calculations
@@ -1216,11 +1185,11 @@ Specialized DAX logic was developed to solve:
 Five analytical pages were developed:
 
 ```text
-01  Executive Overview
-02  Customer & Regional Insights
-03  Product Profitability
-04  Sales Team Performance
-05  Logistics Operations
+01 Executive Overview
+02 Customer & Regional Insights
+03 Product Profitability
+04 Sales Team Performance
+05 Logistics Operations
 ```
 
 The pages share a consistent design language and navigation framework.
@@ -1240,7 +1209,7 @@ The final model and dashboards were validated across:
 * Business logic
 * Visual consistency
 
-The objective was to ensure that Power BI results remain consistent with the underlying Gold warehouse.
+The objective was to ensure that the numbers displayed in Power BI remain consistent with the underlying Gold warehouse.
 
 ---
 
@@ -1249,45 +1218,54 @@ The objective was to ensure that Power BI results remain consistent with the und
 ```text
 SupplyChainDWH/
 │
-├── sql_scripts/
+├── DATA/
 │   │
-│   ├── bronze/
-│   │   ├── 01_create_bronze_tables.sql
-│   │   └── 02_load_raw_data.sql
-│   │
-│   ├── silver/
-│   │   ├── 01_data_cleaning.sql
-│   │   ├── 02_standardization.sql
-│   │   └── 03_data_quality_checks.sql
-│   │
-│   └── gold/
-│       ├── 01_create_dimensions.sql
-│       ├── 02_create_fact.sql
-│       └── 03_load_gold_layer.sql
+│   ├── Data handling.sql
+│   │   
+│   │   
+│   │──Customers.csv
+│   │──products.csv
+│   │──salesman.csv   
+│   │──orders.csv    
+│       
+│   
+│   
+│       
+│       
+│      
+│
+├── IMAGES/
+│   ├── EXEC.png
+│   ├── CUSTOMER.png
+│   ├── PRODUCT.png
+│   ├── SALES.png
+│   └── LOGISTICS.png
 │
 ├── pbix_file/
 │   └── SupplyChainDWH.pbix
 │
-├── docs/
-│   ├── architecture/
-│   ├── data_dictionary/
-│   └── screenshots/
+│
+│   
+│   
+│   
 │
 ├── README.md
-└── LICENSE
+
 ```
 
-The repository structure demonstrates separation of concerns between:
+> **Important:** The dashboard screenshots are referenced using repository-relative paths such as `IMAGES/EXEC.png`. The local Windows paths used during development (`C:\Users\...`) should **not** be placed in the GitHub README because they are only valid on the local machine.
+
+This organization demonstrates a clear separation of concerns between:
 
 ```text
 Ingestion
-    ↓
+   ↓
 Transformation
-    ↓
+   ↓
 Dimensional Modeling
-    ↓
+   ↓
 Business Intelligence
-    ↓
+   ↓
 Documentation
 ```
 
@@ -1297,7 +1275,7 @@ Documentation
 
 ## T-SQL — Data Cleansing & Standardization
 
-A representative transformation for normalizing dirty categorical fields:
+A representative transformation for normalizing categorical values:
 
 ```sql
 SELECT
@@ -1326,9 +1304,9 @@ FROM silver_source;
 This combines:
 
 * `TRIM()` → removes leading and trailing whitespace
-* `REPLACE()` → normalizes repeated internal spaces
+* `REPLACE()` → removes hidden/internal double-spaces
 * `UPPER()` → normalizes capitalization
-* `CASE` → applies business-specific canonical mapping
+* `CASE` → applies business-specific standardization
 
 The result is a consistent analytical category rather than multiple technically different representations of the same market.
 
@@ -1354,7 +1332,7 @@ CALCULATE (
 )
 ```
 
-The key design principle is **explicit filter-context control**.
+The key design principle is explicit filter-context control.
 
 Rather than relying entirely on standard time-intelligence functions, the measure explicitly establishes the desired temporal context.
 
@@ -1372,7 +1350,7 @@ Customer Display Name =
         & "]"
 ```
 
-This preserves human-readable names while preventing identical names from collapsing into a single analytical category.
+This preserves human-readable customer names while preventing identical names from collapsing into a single analytical category.
 
 ---
 
@@ -1400,7 +1378,7 @@ DIVIDE (
 )
 ```
 
-This metric allows revenue performance to be evaluated independently from transaction volume.
+This measure allows revenue performance to be analyzed independently from transaction volume.
 
 ---
 
@@ -1418,11 +1396,11 @@ The dashboard identifies a:
 
 > **54.82% late delivery rate**
 
-### Observation
+### What It Means
 
 More than half of the analyzed deliveries are classified as late according to the modeled delivery logic.
 
-### Recommended Action
+### Potential Business Action
 
 Management can investigate:
 
@@ -1432,7 +1410,7 @@ Management can investigate:
 * Historical periods
 * Scheduled-vs-actual shipping gaps
 
-The next analytical step would be to isolate the dimensions contributing most heavily to late deliveries.
+The next analytical step would be to isolate the dimensions contributing most heavily to the late-delivery rate.
 
 ---
 
@@ -1446,7 +1424,7 @@ The customer-ID solution prevents:
 Mary Smith
 ```
 
-from becoming an artificial high-value customer created by aggregating several independent records.
+from becoming an artificial high-value customer created by aggregating several different records.
 
 ### Business Value
 
@@ -1462,7 +1440,7 @@ Stakeholders can identify actual individual VIP customers and make better decisi
 
 ## 3. 💸 Potential Margin Erosion from Discounting
 
-The Product Profitability page evaluates:
+The Product Profitability page directly evaluates:
 
 ```text
 Average Discount
@@ -1474,12 +1452,7 @@ Profit Margin
 
 > **Are aggressive discounts generating enough additional revenue to compensate for the margin they destroy?**
 
-Products showing high discount levels alongside weak margins should be candidates for:
-
-* Pricing review
-* Promotional review
-* Margin investigation
-* Product portfolio optimization
+Products showing high discount levels alongside weak margins should be candidates for pricing and promotional review.
 
 ---
 
@@ -1487,14 +1460,14 @@ Products showing high discount levels alongside weak margins should be candidate
 
 Commission rates are evaluated against revenue rather than looking only at sales volume.
 
-This helps identify cases where:
+This makes it possible to identify cases where:
 
 * High commission costs generate strong revenue
 * High commission costs generate weak revenue
 * High revenue is achieved efficiently
 * Sales representatives contribute meaningfully to profitability
 
-The analytical perspective therefore moves from:
+The business can therefore move from:
 
 > **"Who sold the most?"**
 
@@ -1522,23 +1495,24 @@ The project covers:
 * Referential integrity
 * Semantic modeling
 * Advanced DAX
-* Filter-context manipulation
-* Time-intelligence troubleshooting
-* Granularity management
 * Dashboard engineering
 * Business analytics
 
-## Multi-Layer Problem Solving
+---
+
+## Problem-Solving Depth
+
+The project demonstrates the ability to troubleshoot problems across multiple layers.
 
 ### Data Layer
 
 ```text
 Dirty Data
-    ↓
+   ↓
 Profiling
-    ↓
+   ↓
 Cleansing
-    ↓
+   ↓
 Standardization
 ```
 
@@ -1546,11 +1520,11 @@ Standardization
 
 ```text
 Cleansed Data
-    ↓
+   ↓
 Dimensional Modeling
-    ↓
+   ↓
 Surrogate Keys
-    ↓
+   ↓
 Fact + Dimensions
 ```
 
@@ -1558,11 +1532,11 @@ Fact + Dimensions
 
 ```text
 Star Schema
-    ↓
+   ↓
 Relationships
-    ↓
+   ↓
 Measures
-    ↓
+   ↓
 Filter Context
 ```
 
@@ -1570,11 +1544,11 @@ Filter Context
 
 ```text
 Semantic Model
-    ↓
+   ↓
 DAX
-    ↓
+   ↓
 Visual Analytics
-    ↓
+   ↓
 Business Insights
 ```
 
@@ -1590,9 +1564,9 @@ It represents an integrated analytical platform:
 
 The current implementation provides the core analytical architecture.
 
-The following are **future enhancements**, not features claimed as part of the current implementation.
+Potential future enhancements include:
 
-## ⚙️ ETL & Orchestration
+### ⚙️ ETL & Orchestration
 
 * Automated ETL orchestration
 * SQL Server Agent scheduling
@@ -1600,7 +1574,7 @@ The following are **future enhancements**, not features claimed as part of the c
 * Incremental loading
 * Automated refresh monitoring
 
-## 🧪 Data Quality
+### 🧪 Data Quality
 
 * Automated data-quality testing
 * Data-quality scorecards
@@ -1608,16 +1582,16 @@ The following are **future enhancements**, not features claimed as part of the c
 * Automated anomaly detection
 * Data observability
 
-## 🏛️ Dimensional Modeling
+### 🏛️ Dimensional Modeling
 
 * Slowly Changing Dimensions
 * Historical attribute tracking
 * Expanded conformed dimensions
-* Advanced warehouse auditing
+* More advanced warehouse auditing
 
-## ☁️ Cloud Architecture
+### ☁️ Cloud Architecture
 
-A potential future architecture could evolve toward:
+Potential migration paths could include:
 
 ```text
 SQL Server
@@ -1629,14 +1603,15 @@ Azure SQL / Synapse
 Power BI
 ```
 
-## 🚀 BI Engineering
+### 🚀 BI Engineering
 
 * Power BI deployment pipelines
 * CI/CD for SQL and BI assets
 * Automated semantic-model validation
 * Centralized workspace governance
 * Refresh monitoring
-* Automated deployment processes
+
+> **Note:** These are future architectural enhancements and are not claimed as components of the current implementation.
 
 ---
 
@@ -1644,15 +1619,15 @@ Power BI
 
 SupplyChainDWH demonstrates how an analytical system can be engineered as a complete pipeline rather than as an isolated reporting solution.
 
-The project demonstrates:
+### The Project Demonstrates
 
 ```text
 ┌──────────────────────────────┐
-│          RAW DATA            │
+│        RAW DATA              │
 └──────────────┬───────────────┘
                ↓
 ┌──────────────────────────────┐
-│       DATA PROFILING         │
+│      DATA PROFILING          │
 └──────────────┬───────────────┘
                ↓
 ┌──────────────────────────────┐
@@ -1668,19 +1643,19 @@ The project demonstrates:
 └──────────────┬───────────────┘
                ↓
 ┌──────────────────────────────┐
-│       SEMANTIC MODEL         │
+│      SEMANTIC MODEL          │
 └──────────────┬───────────────┘
                ↓
 ┌──────────────────────────────┐
-│         ADVANCED DAX         │
+│        ADVANCED DAX          │
 └──────────────┬───────────────┘
                ↓
 ┌──────────────────────────────┐
-│        POWER BI APP          │
+│       POWER BI APP           │
 └──────────────┬───────────────┘
                ↓
 ┌──────────────────────────────┐
-│      BUSINESS INSIGHTS       │
+│     BUSINESS INSIGHTS        │
 └──────────────────────────────┘
 ```
 
@@ -1694,7 +1669,7 @@ The dashboard is not designed merely to look attractive.
 
 Each layer exists to ensure that the final business insight is:
 
-**Traceable → Standardized → Modeled → Calculated → Visualized → Actionable**
+**traceable → standardized → modeled → calculated → visualized → actionable.**
 
 ---
 
@@ -1704,7 +1679,6 @@ Each layer exists to ensure that the final business insight is:
 
 **Data Engineering • Data Analytics • Business Intelligence • Artificial Intelligence**
 
-SupplyChainDWH represents an end-to-end portfolio implementation focused on building reliable data pipelines, dimensional warehouses, analytical semantic models, and decision-oriented BI applications.
+This project represents an end-to-end portfolio implementation focused on building reliable data pipelines, dimensional warehouses, analytical semantic models, and decision-oriented BI applications.
 
 ---
-
